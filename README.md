@@ -1,3 +1,5 @@
+<img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/2a551f1e-af98-4509-920e-147ce80b1a82" />
+
                             
 Capability-Centric Architecture (CCA)
 A Unified Pattern for Embedded and Enterprise Systems
