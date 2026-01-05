@@ -1,56 +1,63 @@
 <img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/2a551f1e-af98-4509-920e-147ce80b1a82" />
 
                             
-Capability-Centric Architecture (CCA)
-A Unified Pattern for Embedded and Enterprise Systems
+# Capability-Centric Architecture (CCA): A Unified Pattern for Embedded and Enterprise Systems
 
-🚀 Welcome to the Future of Software Architecture
+## 🚀 Welcome to the Future of Software Architecture
+
 Imagine building a system that works equally well on a tiny microcontroller reading sensor data and on a massive cloud platform processing billions of transactions. Sounds impossible? Welcome to Capability-Centric Architecture, where this dream becomes reality.
 For decades, software architects have faced an uncomfortable choice: build for embedded systems with their real-time constraints, direct hardware access, and resource limitations, or build for enterprise systems with their need for flexibility, scalability, and rapid evolution. Traditional architectural patterns force us to choose one world or the other—or worse, maintain completely separate architectural approaches for different system types.
 Capability-Centric Architecture shatters this false dichotomy. It extends and synthesizes concepts from Domain-Driven Design, Hexagonal Architecture, and Clean Architecture while introducing new mechanisms specifically designed to work across the entire embedded-to-enterprise spectrum.
 
+
 📋 Table of Contents
 
-Why Existing Architectures Fall Short
-Core Concepts of CCA
-The Capability Nucleus
-Capability Contracts
-Efficiency Gradients
-System Composition
-Embedded vs Enterprise
-Dependency Management
-Evolution Envelopes
-Modern Technologies Integration
-Testing Strategy
-Lifecycle Management
-Implementation Guidelines
-Conclusion
+- Why Existing Architectures Fall Short
+- Core Concepts of CCA
+- The Capability Nucleus
+- Capability Contracts
+- Efficiency Gradients
+- System Composition
+- Embedded vs Enterprise
+- Dependency Management
+- Evolution Envelopes
+- Modern Technologies Integration
+- Testing Strategy
+- Lifecycle Management
+- Implementation Guidelines
+- Conclusion
 
 
-1. Why Existing Architectures Fall Short
+## 1. Why Existing Architectures Fall Short
 Before we dive into the solution, let's understand why existing approaches fail when systems need to evolve, integrate new technologies like AI and containerization, or span the embedded-to-enterprise spectrum.
-The Layered Architecture Problem
+
+
+### The Layered Architecture Problem
+
 Consider a typical layered architecture applied to an industrial control system:
 
-Presentation layer shows sensor values
-Business logic layer processes control algorithms
-Data access layer manages persistence
-Hardware access layer reads sensors and controls actuators
+- Presentation layer shows sensor values
+- Business logic layer processes control algorithms
+- Data access layer manages persistence
+- Hardware access layer reads sensors and controls actuators
 
 The immediate problem: Where does the hardware access layer fit? 
 
-Place it below the data access layer → awkward dependency structure
-Make it a separate concern → violates the layering principle
-Critical issue: Rigid layering makes it nearly impossible to optimize critical paths
+- Place it below the data access layer → awkward dependency structure
+- Make it a separate concern → violates the layering principle
+- Critical issue: Rigid layering makes it nearly impossible to optimize critical paths
 
 When a sensor interrupt occurs, the signal must traverse multiple layers before reaching the control algorithm, introducing unacceptable latency.
-The Hexagonal Architecture Problem
+
+
+### The Hexagonal Architecture Problem
 Hexagonal Architecture attempts to solve this through ports and adapters. The core domain logic sits in the center, and adapters connect to external systems through defined ports.
 This works beautifully for enterprise systems (database adapters, API adapters), but for embedded systems, treating a hardware timer as "just another adapter" obscures the fundamental difference between:
 
-A replaceable external service
+### A replaceable external service
 A hardware component that defines the real-time capabilities of the system
 
+```
 // Port Definition
 public interface SensorPort {
     SensorReading read();
@@ -81,15 +88,16 @@ public class HardwareSensorAdapter implements SensorPort {
     
     private native int readRegister(int address);
 }
+```
 
 Hidden problems:
 
-❌ Prevents controller from accessing sensor metadata in adjacent hardware registers
-❌ Forces all sensor access through method calls (no DMA or interrupt-driven reading)
-❌ Makes testing harder (can't easily inject timing behavior)
-❌ Treats hardware as replaceable, even though it fundamentally shapes system capabilities
+- ❌ Prevents controller from accessing sensor metadata in adjacent hardware registers
+- ❌ Forces all sensor access through method calls (no DMA or interrupt-driven reading)
+- ❌ Makes testing harder (can't easily inject timing behavior)
+- ❌ Treats hardware as replaceable, even though it fundamentally shapes system capabilities
 
-The Clean Architecture Problem
+### The Clean Architecture Problem
 Clean Architecture with its concentric circles and inward-pointing dependencies works wonderfully for business applications, but embedded systems don't fit this model. Hardware is not infrastructure that can be abstracted away—it's the foundation on which capabilities are built.
 Enterprise System Challenges
 As systems grow:
@@ -100,21 +108,25 @@ As systems grow:
 ✗ Modern technologies (AI, Big Data, Kubernetes) don't fit traditional patterns
 
 
-2. Core Concepts of CCA
+## 2. Core Concepts of CCA
 Capability-Centric Architecture introduces several interconnected concepts that work together to address these challenges.
 What is a Capability?
 A capability is a cohesive set of functionality that delivers value, either to users or to other capabilities.
 Similar to Bounded Contexts from Domain-Driven Design, but capabilities extend the concept:
 
-✅ Includes the domain model
-✅ Includes technical mechanisms needed to deliver the capability
-✅ Includes quality attributes it must fulfill
-✅ Includes evolution strategy
+- ✅ Includes the domain model
+- ✅ Includes technical mechanisms needed to deliver the capability
+- ✅ Includes quality attributes it must fulfill
+- ✅ Includes evolution strategy
 
 
-3. The Capability Nucleus: Three Layers of Perfection
+## 3. The Capability Nucleus: Three Layers of Perfection
 Each capability is structured as a Capability Nucleus containing three concentric regions:
+
+
 Capability Nucleus Structure
+
+```
 graph TB
     subgraph Adaptation["ADAPTATION (Outer Layer)"]
         subgraph Realization["REALIZATION (Middle Layer)"]
@@ -136,19 +148,21 @@ graph TB
     style Essence fill:#4CAF50,stroke:#2E7D32,stroke-width:3px,color:#fff
     style Realization fill:#2196F3,stroke:#1565C0,stroke-width:2px,color:#fff
     style Adaptation fill:#FF9800,stroke:#E65100,stroke-width:2px,color:#fff
+```
 
-The Three Layers Explained
+### The Three Layers Explained
 1. ESSENCE (Innermost Layer)
 The soul of your capability—pure domain logic or algorithmic core.
 Characteristics:
 
-✅ Pure domain logic
-✅ No external dependencies (except capability contracts)
-✅ 100% testable
-✅ Platform-independent
-✅ Contains algorithms and business rules
+- ✅ Pure domain logic
+- ✅ No external dependencies (except capability contracts)
+- ✅ 100% testable
+- ✅ Platform-independent
+- ✅ Contains algorithms and business rules
 
 Example:
+```
 public class TemperatureControlEssence {
     private final ControlParameters parameters;
     
@@ -169,18 +183,20 @@ public class TemperatureControlEssence {
         return proportional + integral + derivative;
     }
 }
+```
 
-2. REALIZATION (Middle Layer)
+## 2. REALIZATION (Middle Layer)
 The bridge between pure logic and the real world.
 Characteristics:
 
-✅ Hardware access (for embedded) or database/message queue access (for enterprise)
-✅ Interrupt handlers, DMA controllers
-✅ Technology-specific implementations
-✅ Can be optimized for performance
-✅ Can be replaced or mocked for testing
+- ✅ Hardware access (for embedded) or database/message queue access (for enterprise)
+- ✅ Interrupt handlers, DMA controllers
+- ✅ Technology-specific implementations
+- ✅ Can be optimized for performance
+- ✅ Can be replaced or mocked for testing
 
 Example:
+```
 public class TemperatureControlRealization {
     private final TemperatureControlEssence essence;
     private static final int TEMP_SENSOR_REGISTER = 0x40001000;
@@ -210,17 +226,19 @@ public class TemperatureControlRealization {
     private native int readRegisterDirect(int address);
     private native void writeRegisterDirect(int address, int value);
 }
+```
 
-3. ADAPTATION (Outer Layer)
+### 3. ADAPTATION (Outer Layer)
 The interface to the outside world.
 Characteristics:
 
-✅ REST/gRPC APIs
-✅ Message queue consumers/producers
-✅ Event publishers/subscribers
-✅ External system integrations
+- ✅ REST/gRPC APIs
+- ✅ Message queue consumers/producers
+- ✅ Event publishers/subscribers
+- ✅ External system integrations
 
 Example:
+```
 public class TemperatureControlAdaptation {
     private final TemperatureControlRealization realization;
     
@@ -242,11 +260,12 @@ public class TemperatureControlAdaptation {
         realization.setTargetTemperature(command.getTargetTemp());
     }
 }
+```
 
-
-4. Capability Contracts: The Interaction Model
+### 4. Capability Contracts: The Interaction Model
 Capabilities interact through Contracts instead of direct dependencies.
 Contract Structure
+```
 graph LR
     A[Capability A] -->|Contract| B[Capability B]
     
@@ -263,41 +282,27 @@ graph LR
     style A fill:#4CAF50,stroke:#2E7D32,stroke-width:2px
     style B fill:#2196F3,stroke:#1565C0,stroke-width:2px
     style Contract fill:#FFF3E0,stroke:#E65100,stroke-width:2px
+```
 
 Benefits of Contracts
 
 
 
-Benefit
-Description
+* Benefit
+* Description
 
 
 
-Loose Coupling
-Capabilities don't depend on implementations
-
-
-Independent Evolution
-Each capability can evolve separately
-
-
-Testability
-Easy to mock contracts for testing
-
-
-Clear Dependencies
-Explicit declaration of what's needed
-
-
-Replaceability
-Swap implementations without breaking consumers
-
-
-Versioning
-Manage changes over time with semantic versioning
+- Loose Coupling: Capabilities don't depend on implementations
+- Independent Evolution: Each capability can evolve separately
+- Testability: Easy to mock contracts for testing
+- Clear Dependencies: Explicit declaration of what's needed
+- Replaceability: Swap implementations without breaking consumers
+- Versioning: Manage changes over time with semantic versioning
 
 
 Example Contract
+```
 /**
  * Contract for Temperature Monitoring Capability.
  * Defines what this capability provides and requires.
@@ -367,11 +372,16 @@ public interface TemperatureMonitoringContract {
         }
     }
 }
+```
 
 
-5. Efficiency Gradients: Balancing Performance and Abstraction
+### 5. Efficiency Gradients: Balancing Performance and Abstraction
 One of CCA's most powerful concepts: different parts of the system can operate at different levels of abstraction and optimization.
+
+
 Efficiency Gradient Levels
+
+```
 graph TD
     subgraph "HIGH ABSTRACTION<br/>(Flexible, Maintainable)"
         G3[GRADIENT 3: FLEXIBLE LAYER<br/>• Database Transactions<br/>• Batch Processing<br/>• Analytics &amp; Reporting<br/>• Object Allocation OK<br/><br/>Example: Storage, Logging, Analytics]
@@ -391,12 +401,15 @@ graph TD
     style G3 fill:#4CAF50,stroke:#2E7D32,stroke-width:2px,color:#fff
     style G2 fill:#FF9800,stroke:#E65100,stroke-width:2px,color:#fff
     style G1 fill:#F44336,stroke:#C62828,stroke-width:2px,color:#fff
+```
 
-Key Insight
+### Key Insight
 
 Critical paths can use direct hardware access with minimal overhead, while non-critical paths can use higher abstractions for flexibility and maintainability.
 
 Example: Data Acquisition System
+
+```
 /**
  * Demonstrates Efficiency Gradients in a data acquisition capability.
  * Different operations run at different abstraction levels.
@@ -474,11 +487,15 @@ public class DataAcquisitionCapability {
         });
     }
 }
+```
 
-
-6. System Composition: Putting It All Together
+### 6. System Composition: Putting It All Together
 A complete system built with CCA consists of multiple capabilities, each structured as a Capability Nucleus.
+
+
 System Architecture Overview
+
+```
 graph TB
     Registry[CAPABILITY REGISTRY<br/>• Registration<br/>• Bindings<br/>• Cycle Check]
     
@@ -514,16 +531,18 @@ graph TB
     style CapB fill:#2196F3,stroke:#1565C0,stroke-width:2px
     style CapC fill:#FF9800,stroke:#E65100,stroke-width:2px
     style Evolution fill:#FFF3E0,stroke:#E65100,stroke-width:2px
+```
 
-The Capability Registry
+### The Capability Registry
 The Capability Registry is the central coordination point that:
 
-✅ Manages all capabilities and their metadata
-✅ Tracks contracts and bindings
-✅ Prevents circular dependencies
-✅ Provides topological sorting for initialization order
-✅ Enables dependency injection
+- ✅ Manages all capabilities and their metadata
+- ✅ Tracks contracts and bindings
+- ✅ Prevents circular dependencies
+- ✅ Provides topological sorting for initialization order
+- ✅ Enables dependency injection
 
+```
 /**
  * Registry that manages capabilities and their interactions.
  * Central coordination point for the architecture.
@@ -608,9 +627,10 @@ public class CapabilityRegistry {
         return dependencyGraph.wouldCreateCycle(from, to);
     }
 }
+```
 
 
-7. Embedded vs Enterprise: One Architecture, Two Worlds
+### 7. Embedded vs Enterprise: One Architecture, Two Worlds
 The same architectural pattern works for both embedded and enterprise systems!
 Comparison Table
 
@@ -622,37 +642,52 @@ Enterprise System
 
 
 
+
 Example Capability
-Motor Control
-Payment Processing
+
+
+- Motor Control
+- Payment Processing
 
 
 ESSENCE
-• PID Algorithm• Control Logic
-• Validation Rules• Fee Calculation
+
+
+- PID Algorithm• Control Logic
+- Validation Rules• Fee Calculation
 
 
 REALIZATION
-• HW Registers• Interrupts• DMA• PWM Control
-• Database• Message Queue• Payment Gateway• Audit Log
+
+
+- HW Registers• Interrupts• DMA• PWM Control
+- Database• Message Queue• Payment Gateway• Audit Log
 
 
 ADAPTATION
-• Status Query• Configuration
-• REST API• Message Bus• GraphQL
+
+
+- Status Query• Configuration
+- REST API• Message Bus• GraphQL
 
 
 Efficiency Gradient
-• Critical: Interrupt• Medium: Processing• Flexible: Logging
-• Critical: Request• Medium: Business Logic• Flexible: Analytics
+
+
+- Critical: Interrupt• Medium: Processing• Flexible: Logging
+- Critical: Request• Medium: Business Logic• Flexible: Analytics
 
 
 Resources
-• 64KB RAM• 100μs Latency• Real-time Guarantees
-• Auto-Scaling• Load Balancing• Horizontal Scaling
+
+
+- 64KB RAM• 100μs Latency• Real-time Guarantees
+- Auto-Scaling• Load Balancing• Horizontal Scaling
 
 
 Visual Comparison
+
+```
 graph LR
     subgraph Embedded["EMBEDDED SYSTEM"]
         E_Cap[Motor Control Capability]
@@ -678,11 +713,14 @@ graph LR
     
     style Embedded fill:#4CAF50,stroke:#2E7D32,stroke-width:2px
     style Enterprise fill:#2196F3,stroke:#1565C0,stroke-width:2px
+```
 
+### 8. Dependency Management: Preventing Circular Dependencies
 
-8. Dependency Management: Preventing Circular Dependencies
 The Capability Registry actively prevents circular dependencies!
+
 The Problem: Circular Dependency
+```
 graph TD
     Customer[Customer Management]
     Order[Order Processing]
@@ -695,9 +733,12 @@ graph TD
     style Customer fill:#F44336,stroke:#C62828,stroke-width:3px,color:#fff
     style Order fill:#F44336,stroke:#C62828,stroke-width:3px,color:#fff
     style Inventory fill:#F44336,stroke:#C62828,stroke-width:3px,color:#fff
+```
 
 ❌ CYCLE DETECTED!
 The Solution: Extract New Capability
+
+```
 graph TD
     Customer[Customer Management]
     Inventory[Inventory Management]
@@ -712,41 +753,30 @@ graph TD
     style Inventory fill:#4CAF50,stroke:#2E7D32,stroke-width:2px
     style Analytics fill:#2196F3,stroke:#1565C0,stroke-width:2px
     style Order fill:#4CAF50,stroke:#2E7D32,stroke-width:2px
+```
 
 ✓ NO CYCLE - CLEAN ARCHITECTURE!
 Benefits of Forced Restructuring
 
 
 
-Benefit
-Description
+* Benefit
+* Description
 
 
 
-Better Separation
-Each capability has a clear, single responsibility
-
-
-Reusability
-Customer Analytics can be used by other capabilities
-
-
-Independent Evolution
-Each capability can evolve without breaking others
-
-
-Clearer Architecture
-Dependencies flow in one direction
-
-
-Easier Testing
-No circular test dependencies
+- Better Separation: Each capability has a clear, single responsibility
+- Reusability: Customer Analytics can be used by other capabilities
+- Independent Evolution: Each capability can evolve without breaking others
+- Clearer Architecture: Dependencies flow in one direction
+- Easier Testing: No circular test dependencies
 
 
 
-9. Evolution Envelopes: Managing Change Over Time
+## 9. Evolution Envelopes: Managing Change Over Time
 Evolution Envelopes define how a capability can change while maintaining compatibility.
 Semantic Versioning
+```
 graph LR
     V1[v1.0.0<br/>Initial Release]
     V11[v1.1.0<br/>+Feature<br/>(backward compat.)]
@@ -761,13 +791,17 @@ graph LR
     style V11 fill:#4CAF50,stroke:#2E7D32,stroke-width:2px
     style V12 fill:#4CAF50,stroke:#2E7D32,stroke-width:2px
     style V2 fill:#FF9800,stroke:#E65100,stroke-width:2px
+```
 
 Version Number Structure
+
+
 MAJOR.MINOR.PATCH
   │     │     │
   │     │     └─► Bug-Fixes (always compatible)
   │     └───────► New Features (backward compatible)
   └─────────────► Breaking Changes
+
 
 Migration Paths
 Minor Version Update (v1.0.0 → v1.1.0)
@@ -775,6 +809,7 @@ Minor Version Update (v1.0.0 → v1.1.0)
   1. New method available
   2. Old methods continue to work
   3. No changes required
+
 
 Major Version Update (v1.2.0 → v2.0.0)
 ✓ Steps:
@@ -785,6 +820,7 @@ Major Version Update (v1.2.0 → v2.0.0)
   5. After transition: remove v1.x
 
 Deprecation Policy Example
+```
 /**
  * Payment Processing Capability - Evolution Example
  */
@@ -812,51 +848,52 @@ public interface PaymentProcessingContract {
      */
     PaymentResult processPaymentV2(PaymentRequest request);
 }
+```
 
-
-10. Modern Technologies Integration
+### 10. Modern Technologies Integration
 CCA is designed to integrate modern technologies like AI, Big Data, Cloud Computing, and Containerization.
 Technology Integration Matrix
 
 
 
-Technology
-Capability Type
-ESSENCE
-REALIZATION
-ADAPTATION
+* Technology
+* Capability Type
+* ESSENCE
+* REALIZATION
+* ADAPTATION
 
 
 
-AI/ML
-Recommendation Engine
-Business Rules
-Model Registry, Feature Store, Inference
-REST API, Batch Processing
+- AI/ML
+- Recommendation Engine
+- Business Rules
+-- Model Registry, Feature Store, Inference
+-- REST API, Batch Processing
 
 
-Big Data
-Analytics
-Algorithms (LTV, Segmentation)
-Spark, Data Lake, Warehouse
-Scheduled Jobs, Query Interface
+- Big Data
+- Analytics
+- Algorithms (LTV, Segmentation)
+- Spark, Data Lake, Warehouse
+- Scheduled Jobs, Query Interface
 
 
-Kubernetes
-Deployment
-Deployment Strategies &amp; Policies
-K8s API, Container Registry, Helm
-CLI, GitOps, CI/CD
+- Kubernetes
+- Deployment
+- Deployment Strategies &  Policies
+- K8s API, Container Registry, Helm
+- CLI, GitOps, CI/CD
 
 
-IaC
-Infrastructure
-Requirements &amp; Constraints
-Terraform, CloudFormation, Pulumi
-Declarative Config, API
+- IaC
+- Infrastructure
+- Requirements & Constraints
+- Terraform, CloudFormation, Pulumi
+- Declarative Config, API
 
 
 AI/ML Capability Example
+```
 /**
  * AI Model Capability for product recommendations.
  * Demonstrates integration of Machine Learning into the architecture.
@@ -938,8 +975,10 @@ public class ProductRecommendationAICapability implements CapabilityInstance {
         }
     }
 }
+```
 
 Deployment Modes
+```
 graph TB
     subgraph Embedded["EMBEDDED"]
         E1[Monolith]
@@ -969,8 +1008,10 @@ graph TB
 
 Key Insight: The same capability code can run in different deployment modes without modification!
 
-11. Testing Strategy: Multi-Layer Approach
+###11. Testing Strategy: Multi-Layer Approach
 CCA enables comprehensive testing at multiple levels.
+
+
 Testing Pyramid
 graph TB
     E2E[E2E Tests<br/>Complete System Integration<br/>Realistic Scenarios]
@@ -986,38 +1027,39 @@ graph TB
     style Contract fill:#FF9800,stroke:#E65100,stroke-width:2px,color:#fff
     style Integration fill:#2196F3,stroke:#1565C0,stroke-width:2px,color:#fff
     style Unit fill:#4CAF50,stroke:#2E7D32,stroke-width:2px,color:#fff
+```
 
 Test Types and Characteristics
 
 
 
-Test Type
-Layer
-Speed
-Coverage
-Infrastructure
+* Test Type
+* Layer
+* Speed
+* Coverage
+* Infrastructure
 
 
 
-Unit Tests
-Essence
-Milliseconds
-100% possible
-None
+- Unit Tests
+- Essence
+- Milliseconds
+- 100% possible
+- None
 
 
-Integration Tests
-Realization
-Seconds
-Infrastructure interaction
-Mocked
+- Integration Tests
+- Realization
+- Seconds
+- Infrastructure interaction
+- Mocked
 
 
-Contract Tests
-Adaptation
-Seconds
-Contract fulfillment
-Minimal
+- Contract Tests
+- Adaptation
+- Seconds
+- Contract fulfillment
+- Minimal
 
 
 E2E Tests
@@ -1028,6 +1070,7 @@ Full
 
 
 Example Test Suite
+```
 /**
  * Unit Tests - ESSENCE Layer
  * Fast, deterministic, no infrastructure
@@ -1149,11 +1192,15 @@ public class PaymentE2ETest {
         assertEquals(newBalance, customerService.getBalance(customerId));
     }
 }
+```
 
+`## 12. Lifecycle Management: Initialization &amp; Shutdown
 
-12. Lifecycle Management: Initialization &amp; Shutdown
 The Capability Lifecycle Manager ensures correct initialization order using topological sorting.
+
+
 Initialization Process
+```
 graph TD
     Start[Start] --> CreateGraph[1. Create Dependency Graph]
     CreateGraph --> Sort[2. Topological Sort]
@@ -1178,6 +1225,8 @@ graph TD
     
     style Start fill:#4CAF50,stroke:#2E7D32,stroke-width:2px
     style Running fill:#4CAF50,stroke:#2E7D32,stroke-width:2px
+```
+
 
 Initialization Steps for Each Capability
 STEP 1: Capability A
@@ -1188,6 +1237,7 @@ STEP 1: Capability A
 │ ✓ Call start()                 │
 └────────────────────────────────┘
 
+
 STEP 2: Capability C
 ┌────────────────────────────────┐
 │ ✓ Create Instance              │
@@ -1196,6 +1246,7 @@ STEP 2: Capability C
 │ ✓ Call start()                 │
 └────────────────────────────────┘
 
+
 STEP 3: Capability B
 ┌────────────────────────────────┐
 │ ✓ Create Instance              │
@@ -1203,6 +1254,7 @@ STEP 3: Capability B
 │ ✓ Call initialize()            │
 │ ✓ Call start()                 │
 └────────────────────────────────┘
+
 
 STEP 4: Capability D
 ┌────────────────────────────────┐
@@ -1221,6 +1273,7 @@ Each Capability:
 3. Close Connections
 4. Call cleanup()
 
+```
 Lifecycle Manager Implementation
 /**
  * Manages the lifecycle of all capabilities in the system.
@@ -1313,9 +1366,9 @@ public class CapabilityLifecycleManager {
         }
     }
 }
+```
 
-
-13. Implementation Guidelines
+## 13. Implementation Guidelines
 Guideline 1: Identify Capabilities Based on Cohesive Functionality
 A capability should represent a complete unit of functionality that delivers value. It should have a clear purpose that can be expressed in a single sentence.
 ✅ Good Examples
@@ -1331,84 +1384,72 @@ Database Access Capability (technical layer, not domain capability)
 User Interface Capability (technical concern)
 Logging Capability (cross-cutting concern, should be part of realization)
 
-Guideline 2: Define Clear Contracts
+### Guideline 2: Define Clear Contracts
 A contract should specify:
 
 
 
-Element
-Description
+- Element
+- Description
 
 
 
-What (not How)
-The functionality provided
+- What (not How): The functionality provided
+- Requirements: What the capability needs from others
+- Protocols: Interaction patterns (sync, async, batch)
+- Quality Attributes: Performance, reliability, availability
+- Use Semantic Versioning: MAJOR.MINOR.PATCH
 
+* MAJOR: Breaking changes (rarely, well-planned)
+* MINOR: New features (backward compatible)
+* PATCH: Bug fixes (always compatible)
 
-Requirements
-What the capability needs from others
-
-
-Protocols
-Interaction patterns (sync, async, batch)
-
-
-Quality Attributes
-Performance, reliability, availability
-
-
-Use Semantic Versioning
-MAJOR.MINOR.PATCH
-
-MAJOR: Breaking changes (rarely, well-planned)
-MINOR: New features (backward compatible)
-PATCH: Bug fixes (always compatible)
-
-Guideline 3: Use Efficiency Gradients Appropriately
+### Guideline 3: Use Efficiency Gradients Appropriately
 Not every operation needs to be optimized to the maximum. Identify critical paths and optimize those. Use higher abstractions for non-critical paths.
 For Embedded Systems
 
 
 
-Path Type
-Characteristics
-Example
+- Path Type
+- Characteristics
+- Example
 
 
 
-Critical
-Direct hardware access, minimal abstraction
-Real-time control loop, interrupt handler
+- Critical
+- Direct hardware access, minimal abstraction
+- Real-time control loop, interrupt handler
 
 
-Non-Critical
-Higher abstractions, maintainability focus
-Logging, diagnostics, communication
+- Non-Critical
+- Higher abstractions, maintainability focus
+- Logging, diagnostics, communication
 
 
-For Enterprise Systems
-
-
-
-Path Type
-Characteristics
-Example
+### For Enterprise Systems
 
 
 
-Critical
-Optimized for performance
-Request handling for high-traffic operations
+- Path Type
+- Characteristics
+- Example
 
 
-Non-Critical
-Flexible, potentially slower
-Administrative operations, batch processing, analytics
+
+- Critical
+- Optimized for performance
+- Request handling for high-traffic operations
+
+
+- Non-Critical
+- Flexible, potentially slower
+- Administrative operations, batch processing, analytics
 
 
 Guideline 4: Manage Dependencies Carefully
 Every dependency should go through a contract, not through direct reference to another capability's implementation.
 Benefits
+```
 graph LR
     A[Capability A] -->|Contract| B[Capability B]
     
@@ -1424,16 +1465,17 @@ graph LR
     
     style A fill:#4CAF50,stroke:#2E7D32,stroke-width:2px
     style B fill:#2196F3,stroke:#1565C0,stroke-width:2px
+```
 
-Use the Capability Registry
+### Use the Capability Registry
 The registry will detect circular dependencies early and force you to restructure, leading to better architecture.
 Guideline 5: Plan for Evolution from the Start
 Every capability should have an Evolution Envelope that specifies:
 
-✅ Versioning strategy
-✅ Deprecation policy
-✅ Migration paths
-✅ Backward compatibility rules
+- Versioning strategy
+- Deprecation policy
+- Migration paths
+- Backward compatibility rules
 
 When Making Breaking Changes
 1. Introduce it as a new major version
@@ -1443,55 +1485,30 @@ When Making Breaking Changes
 5. Give consumers sufficient time to adapt (e.g., 6 months)
 
 
-14. Conclusion
+## 14. Conclusion
 Capability-Centric Architecture represents an evolution in architectural thinking that synthesizes the best ideas from Domain-Driven Design, Hexagonal Architecture, and Clean Architecture while adding new mechanisms specifically designed to support both embedded and enterprise systems in the modern technological landscape.
 🎯 Key Takeaways
 
 
 
-Principle
-Benefit
+## Principle Benefits
 
 
 
-Universal Pattern
-Works equally well for embedded systems (microcontrollers) and enterprise systems (cloud platforms)
+- Universal Pattern: Works equally well for embedded systems (microcontrollers) and enterprise systems (cloud platforms)
+- Three-Layer Nucleus: Essence (pure logic), Realization (infrastructure), Adaptation (interfaces)
+- Contract-Based Interaction: Capabilities interact through well-defined contracts, enabling independent evolution
+- Efficiency Gradients: Critical paths can be highly optimized while non-critical paths use higher abstractions
+- Dependency Management: Built-in circular dependency prevention through the Capability Registry
+- Evolution Support: Formal mechanisms for versioning, deprecation, and migration
+- Modern Technology Integration: Native support for AI/ML, Big Data, Cloud, and Containerization
+- Comprehensive Testing: Multi-layer testing strategy from unit tests to E2E tests
+- Deployment Flexibility: Same code can run embedded, containerized, or serverless
 
 
-Three-Layer Nucleus
-Essence (pure logic), Realization (infrastructure), Adaptation (interfaces)
-
-
-Contract-Based Interaction
-Capabilities interact through well-defined contracts, enabling independent evolution
-
-
-Efficiency Gradients
-Critical paths can be highly optimized while non-critical paths use higher abstractions
-
-
-Dependency Management
-Built-in circular dependency prevention through the Capability Registry
-
-
-Evolution Support
-Formal mechanisms for versioning, deprecation, and migration
-
-
-Modern Technology Integration
-Native support for AI/ML, Big Data, Cloud, and Containerization
-
-
-Comprehensive Testing
-Multi-layer testing strategy from unit tests to E2E tests
-
-
-Deployment Flexibility
-Same code can run embedded, containerized, or serverless
-
-
-🚀 The Path Forward
+## 🚀 The Path Forward
 By following these core principles, teams can build systems that are:
+```
 graph TD
     CCA[Capability-Centric<br/>Architecture]
     
@@ -1505,9 +1522,12 @@ graph TD
     style Test fill:#2196F3,stroke:#1565C0,stroke-width:2px
     style Deploy fill:#FF9800,stroke:#E65100,stroke-width:2px
     style Evolve fill:#00BCD4,stroke:#006064,stroke-width:2px
+```
+
 
 Whether you're controlling industrial machines, processing billions of transactions, or anything in between, Capability-Centric Architecture provides a unified conceptual framework with built-in mechanisms for managing complexity, dependencies, and change.
-📚 Further Reading
+
+## 📚 Further Reading
 
 Domain-Driven Design by Eric Evans
 Clean Architecture by Robert C. Martin
@@ -1516,16 +1536,18 @@ Building Microservices by Sam Newman
 Software Architecture: The Hard Parts by Neal Ford, Mark Richards, Pramod Sadalage, Zhamak Dehghani
 
 
-💡 Ready to Get Started?
+## 💡 Ready to Get Started?
 Start building with CCA today! Begin by:
 
-Identify your first capability - Choose a cohesive unit of functionality
-Define its contract - What does it provide? What does it need?
-Structure the nucleus - Separate Essence, Realization, and Adaptation
-Register it - Add to the Capability Registry
-Test it - Use the multi-layer testing approach
-Evolve it - Plan for change from day one
+- Identify your first capability - Choose a cohesive unit of functionality
+- Define its contract - What does it provide? What does it need?
+- Structure the nucleus - Separate Essence, Realization, and Adaptation
+- Register it - Add to the Capability Registry
+- Test it - Use the multi-layer testing approach
+- Evolve it - Plan for change from day one
 
 The future of software architecture is unified, flexible, and powerful. Welcome to Capability-Centric Architecture! 🚀
 
-Document Version: 1.0.0Last Updated: December 2024License: Creative Commons Attribution 4.0 International
+Document Version: 1.0.0
+Last Updated: December 2026
+License: Creative Commons Attribution 4.0 International
