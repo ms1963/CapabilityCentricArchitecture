@@ -382,7 +382,7 @@ One of CCA's most powerful concepts: different parts of the system can operate a
 
 Efficiency Gradient Levels
 
-```
+``` mermaid
 graph TD
     subgraph "HIGH ABSTRACTION<br/>(Flexible, Maintainable)"
         G3[GRADIENT 3: FLEXIBLE LAYER<br/>• Database Transactions<br/>• Batch Processing<br/>• Analytics &amp; Reporting<br/>• Object Allocation OK<br/><br/>Example: Storage, Logging, Analytics]
@@ -496,7 +496,7 @@ A complete system built with CCA consists of multiple capabilities, each structu
 
 System Architecture Overview
 
-```
+``` mermaid
 graph TB
     Registry[CAPABILITY REGISTRY<br/>• Registration<br/>• Bindings<br/>• Cycle Check]
     
@@ -688,7 +688,7 @@ Resources
 
 Visual Comparison
 
-```
+``` mermaid
 graph LR
     subgraph Embedded["EMBEDDED SYSTEM"]
         E_Cap[Motor Control Capability]
@@ -721,7 +721,8 @@ graph LR
 The Capability Registry actively prevents circular dependencies!
 
 The Problem: Circular Dependency
-```
+
+``` mermaid
 graph TD
     Customer[Customer Management]
     Order[Order Processing]
@@ -739,7 +740,7 @@ graph TD
 ❌ CYCLE DETECTED!
 The Solution: Extract New Capability
 
-```
+``` mermaid
 graph TD
     Customer[Customer Management]
     Inventory[Inventory Management]
@@ -777,7 +778,8 @@ Benefits of Forced Restructuring
 ## 9. Evolution Envelopes: Managing Change Over Time
 Evolution Envelopes define how a capability can change while maintaining compatibility.
 Semantic Versioning
-```
+
+``` mermaid
 graph LR
     V1[v1.0.0<br/>Initial Release]
     V11[v1.1.0<br/>+Feature<br/>(backward compat.)]
@@ -979,7 +981,8 @@ public class ProductRecommendationAICapability implements CapabilityInstance {
 ```
 
 Deployment Modes
-```
+
+``` mermaid
 graph TB
     subgraph Embedded["EMBEDDED"]
         E1[Monolith]
@@ -1201,7 +1204,8 @@ The Capability Lifecycle Manager ensures correct initialization order using topo
 
 
 Initialization Process
-```
+
+``` mermaid
 graph TD
     Start[Start] --> CreateGraph[1. Create Dependency Graph]
     CreateGraph --> Sort[2. Topological Sort]
@@ -1450,7 +1454,8 @@ For Embedded Systems
 Guideline 4: Manage Dependencies Carefully
 Every dependency should go through a contract, not through direct reference to another capability's implementation.
 Benefits
-```
+
+``` mermaid
 graph LR
     A[Capability A] -->|Contract| B[Capability B]
     
@@ -1509,7 +1514,8 @@ Capability-Centric Architecture represents an evolution in architectural thinkin
 
 ## 🚀 The Path Forward
 By following these core principles, teams can build systems that are:
-```
+
+``` mermaid
 graph TD
     CCA[Capability-Centric<br/>Architecture]
     
