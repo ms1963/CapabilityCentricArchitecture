@@ -126,7 +126,7 @@ Each capability is structured as a Capability Nucleus containing three concentri
 
 Capability Nucleus Structure
 
-```
+``` mermaid
 graph TB
     subgraph Adaptation["ADAPTATION (Outer Layer)"]
         subgraph Realization["REALIZATION (Middle Layer)"]
@@ -265,7 +265,8 @@ public class TemperatureControlAdaptation {
 ### 4. Capability Contracts: The Interaction Model
 Capabilities interact through Contracts instead of direct dependencies.
 Contract Structure
-```
+
+``` mermaid
 graph LR
     A[Capability A] -->|Contract| B[Capability B]
     
