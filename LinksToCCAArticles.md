@@ -11,4 +11,4 @@
 - [Using CCA with Lean and Agile Processes](http://stal.blogspot.com/2025/11/designing-applications-with-capability.html)
 - [Building a Car Charging System with CCA](http://stal.blogspot.com/2025/11/capability-centric-architecture-cca.html)
 - [Introduction of CCA 0.1](http://stal.blogspot.com/2025/10/capability-centric-architecture-unified.html)
-
+- [CCA: Distributed Systems and Polyglot Interoperability](http://stal.blogspot.com/2026/02/capability-centric-architecture.html)
