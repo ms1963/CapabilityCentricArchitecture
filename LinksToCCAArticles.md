@@ -1,5 +1,6 @@
 # Links to Articles about Capability-Centric Architecture (CCA)
 
+- [CCA - Comparison with other Styles](http://stal.blogspot.com/2026/02/architectural-evolution-from.html)
 - [CCA v 0.2](http://stal.blogspot.com/2025/12/capability-centric-architecture-updated.html)
 - [Building Applications with CCA](http://stal.blogspot.com/2025/12/building-applications-with-capability.html)
 - [CCA - Step by Step](http://stal.blogspot.com/2025/12/capability-centric-architecture-step-by.html)
