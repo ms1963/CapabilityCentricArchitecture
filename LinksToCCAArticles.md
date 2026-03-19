@@ -1,5 +1,6 @@
 # Links to Articles about Capability-Centric Architecture (CCA)
 
+- [Octopussy an Agentic AI platform that uses CCA](http://stal.blogspot.com/2026/03/octopussy-open-source-agentic-ai.html)
 - [CCA - Comparison with other Styles](http://stal.blogspot.com/2026/02/architectural-evolution-from.html)
 - [CCA v 0.2](http://stal.blogspot.com/2025/12/capability-centric-architecture-updated.html)
 - [Building Applications with CCA](http://stal.blogspot.com/2025/12/building-applications-with-capability.html)
